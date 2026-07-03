@@ -1,5 +1,7 @@
-
-use crate::{mcu::{GPIOA_BASE, GPIOB_BASE, GPIOC_BASE, RCC_BASE}, reg::*};
+use crate::{
+    mcu::{GPIOA_BASE, GPIOB_BASE, GPIOC_BASE, RCC_BASE},
+    reg::*,
+};
 
 pub fn enable_gpio_clock(port: u32) {
     let rcc_ahbenr_addr = (RCC_BASE + 0x14) as *mut u32;
@@ -13,7 +15,7 @@ pub fn enable_gpio_clock(port: u32) {
         GPIOB_BASE => {
             //enable the 18th bit of rcc_ahbenr_addr
             reg_set_bit(rcc_ahbenr_addr, 1, true);
-        },
+        }
         GPIOC_BASE => {
             reg_set_bit(rcc_ahbenr_addr, 2, true);
         }
@@ -31,13 +33,13 @@ pub fn set_gpio_mode_output(port: u32, pin: u32) {
     reg_set_bits(gpio_mode_reg_addr, mode_value, bit_position, 2);
 }
 
-// pub fn set_gpio_mode_input(port: u32, pin: u32) {
-//     let gpio_mode_reg_addr = (port + 0x00) as *mut u32;
-//     let bit_position = pin * 2;
-//     let mode_value = 0;
+pub fn set_gpio_mode_input(port: u32, pin: u32) {
+    let gpio_mode_reg_addr = (port + 0x00) as *mut u32;
+    let bit_position = pin * 2;
+    let mode_value = 0;
 
-//     reg_set_bits(gpio_mode_reg_addr, mode_value, bit_position, 2);
-// }
+    reg_set_bits(gpio_mode_reg_addr, mode_value, bit_position, 2);
+}
 
 pub fn set_gpio_output_type_push_pull(port: u32, pin: u32) {
     let gpio_op_type_reg_addr = (port + 0x04) as *mut u32;
@@ -49,19 +51,19 @@ pub fn set_gpio_output_type_push_pull(port: u32, pin: u32) {
 pub enum PinState {
     Hight,
     Low,
-    Toggle
+    Toggle,
 }
-pub fn set_gpio_pin_state(port : u32 , pin : u32 , pin_state : PinState ){
-  let gpio_bsrr_addr = (port + 0x18) as *mut u32;
-  match pin_state {
-    PinState::Hight => {
-           reg_set_val(gpio_bsrr_addr, 1 << pin);
-    },
-    PinState::Low => {
-        reg_set_val(gpio_bsrr_addr, 1 << (pin + 16));
-    },
-    
-    PinState::Toggle => {
+pub fn set_gpio_pin_state(port: u32, pin: u32, pin_state: PinState) {
+    let gpio_bsrr_addr = (port + 0x18) as *mut u32;
+    match pin_state {
+        PinState::Hight => {
+            reg_set_val(gpio_bsrr_addr, 1 << pin);
+        }
+        PinState::Low => {
+            reg_set_val(gpio_bsrr_addr, 1 << (pin + 16));
+        }
+
+        PinState::Toggle => {
             let gpio_odr_addr = (port + 0x14) as *mut u32;
             if reg_read_bit(gpio_odr_addr, pin) {
                 reg_set_val(gpio_bsrr_addr, 1 << (pin + 16));
@@ -70,5 +72,4 @@ pub fn set_gpio_pin_state(port : u32 , pin : u32 , pin_state : PinState ){
             }
         }
     }
-
 }

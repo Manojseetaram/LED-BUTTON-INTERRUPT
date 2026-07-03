@@ -1,29 +1,54 @@
+use crate::gpio::{
+    PinState, enable_gpio_clock, set_gpio_mode_output, set_gpio_output_type_push_pull,
+    set_gpio_pin_state,
+};
 
-
-use crate::gpio::{PinState, enable_gpio_clock, set_gpio_mode_output, set_gpio_output_type_push_pull, set_gpio_pin_state};
-
-fn clear_bits(value : u32 , mask : u32 )-> u32 {
+fn clear_bits(value: u32, mask: u32) -> u32 {
     value & !mask
 }
-fn set_bits(value : u32 , mask : u32)-> u32 {
-    value | mask 
+fn set_bits(value: u32, mask: u32) -> u32 {
+    value | mask
 }
+///
+///
+///
+///
+///
+///
+///
+///Read only data
+///
+///
+///
+///
+///
 
-pub fn led_init(port: u32, pin: u32){
-   
+///Initialised data
+
+///Uninitialised data
+
+///Stack and Heap data
+
+///Location couter (’ . ‘ )
+
+///The location counter (.) represents the current memory address  within the section being processed.
+
+///As the linker processes the sections defined in the SECTIONS command , it automatically updated the location counter to reflect the current position in memory .
+
+///You can use the location counter to define the start or end of sections or to create gaps between sections by manipulating its value .
+pub fn led_init(port: u32, pin: u32) {
     enable_gpio_clock(port);
 
     set_gpio_mode_output(port, pin);
 
     set_gpio_output_type_push_pull(port, pin);
-    
 }
-pub fn led_on(port: u32, pin: u32){
-      set_gpio_pin_state(port, pin, PinState::Low);  
-  }
-  pub fn led_off(port: u32, pin: u32){
-      set_gpio_pin_state(port, pin, PinState::Hight);  
-  }
-pub fn led_toggle(port : u32  , pin : u32 ){
-     set_gpio_pin_state(port, pin, PinState::Toggle);
+pub fn led_on(port: u32, pin: u32) {
+    set_gpio_pin_state(port, pin, PinState::Low);
+}
+pub fn led_off(port: u32, pin: u32) {
+    set_gpio_pin_state(port, pin, PinState::Hight);
+}
+pub fn led_toggle(port: u32, pin: u32) {
+    set_gpio_pin_state(port, pin, PinState::Toggle);
 }

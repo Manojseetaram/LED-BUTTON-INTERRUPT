@@ -2,15 +2,19 @@
 #![no_main]
 #![allow(clippy::empty_loop)]
 #![allow(dead_code)]
+use board::*;
+use button::*;
 use core::panic::PanicInfo;
 use led::*;
-use board::*;
-mod reg;
+
+use crate::button::Trigger::FallingEdge;
+mod board;
+mod button;
 mod gpio;
-mod startup_stm32f401;
 mod led;
 mod mcu;
-mod board;
+mod reg;
+mod startup_stm32f401;
 fn delay(cycles: u32) {
     for _ in 0..cycles {
         unsafe {
@@ -20,14 +24,16 @@ fn delay(cycles: u32) {
 }
 
 #[unsafe(no_mangle)]
-fn main(){
+fn main() {
     led_init(LED_PORT, LED_PIN);
-   loop {
+    button_init(USER_BTN_PORT, USER_BTN_PIN, Mode::Interrupt(FallingEdge));
+    loop {
         led_on(LED_PORT, LED_PIN);
         delay(3_000_000);
         led_off(LED_PORT, LED_PIN);
         delay(3_000_000);
     }
+    //Todo add button code
 }
 
 #[panic_handler]
@@ -35,6 +41,6 @@ fn panic_handler(_info: &PanicInfo) -> ! {
     loop {}
 }
 
-fn EXTI0_Handler(){
+fn EXTI0_Handler() {
     led_toggle(LED_PORT, LED_PIN)
 }
