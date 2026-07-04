@@ -31,6 +31,11 @@ pub fn button_init(port: u32, pin: u32, mode: Mode) {
                     set_edge(pin, exti::gpio::EdgeTrigger::Rising);
                 }
             }
+            //enable the interrupt in exti
+            // exti::enable_interrupt(exti::ExtiLine);
+            if let Some(exti_line) = exti::ExtiLine::from_pin(pin) {
+                exti::enable_interrupt(exti_line);
+            }
         }
         Mode::Input => {}
     }
