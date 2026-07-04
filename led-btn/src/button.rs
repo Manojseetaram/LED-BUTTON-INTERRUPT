@@ -19,6 +19,7 @@ pub enum Mode {
 pub fn button_init(port: u32, pin: u32, mode: Mode) {
     gpio::enable_gpio_clock(port);
     gpio::set_gpio_mode_input(port, pin);
+    exti::configure_syscfg(port , pin );
     match mode {
         Mode::Interrupt(trigger) => {
             match trigger {

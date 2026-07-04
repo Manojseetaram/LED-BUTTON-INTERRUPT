@@ -1,7 +1,7 @@
 use crate::{mcu::EXTI_BASE, reg::reg_set_bit};
 
 pub mod gpio {
-    use crate::reg::reg_set_bit;
+    use crate::reg::{reg_set_bit, reg_set_bits};
 
     use crate::mcu::*;
     pub enum EdgeTrigger {
@@ -22,6 +22,27 @@ pub mod gpio {
             }
         }
     }
+     pub fn configure_syscfg(port: u32, pin: u32) {
+        let reg_offset = (pin / 4) * 4;
+        let bit_position = (pin % 4) * 4;
+        let syscfg_reg_addr = (SYSCFG_BASE + 0x08 + reg_offset) as *mut u32;
+
+        match port {
+            GPIOA_BASE => {
+               reg_set_bits(syscfg_reg_addr, 0, bit_position , 4);
+            }
+
+            GPIOB_BASE => {
+                reg_set_bits(syscfg_reg_addr, 1, bit_position, 4);
+            }
+
+            //include more match arms realted to other gpio ports like GPIOC, D, E, etc
+
+            _ => (),
+        }
+    }
+
+
 }
 
 pub enum ExtiLine {

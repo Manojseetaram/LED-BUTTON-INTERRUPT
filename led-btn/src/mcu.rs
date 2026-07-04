@@ -4,6 +4,7 @@ pub const GPIOC_BASE: u32 = GPIOA_BASE + 0x800;
 
 pub const RCC_BASE: u32 = 0x4002_3800;
 pub const EXTI_BASE: u32 = 0x4001_3C00;
+pub const SYSCFG_BASE: u32 = 0x4001_3800;
 pub const GPIO_PIN_0: u32 = 0;
 pub const GPIO_PIN_1: u32 = 1;
 pub const GPIO_PIN_2: u32 = 2;
