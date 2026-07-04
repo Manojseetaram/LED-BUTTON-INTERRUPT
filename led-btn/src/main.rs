@@ -10,6 +10,7 @@ use led::*;
 use crate::button::Trigger::FallingEdge;
 mod board;
 mod button;
+mod proc;
 mod exti;
 mod gpio;
 mod led;
@@ -41,7 +42,9 @@ fn main() {
 fn panic_handler(_info: &PanicInfo) -> ! {
     loop {}
 }
-
-fn EXTI0_Handler() {
-    led_toggle(LED_PORT, LED_PIN)
+#[allow(non_snake_case)]
+#[unsafe(no_mangle)]
+extern "C" fn EXTI0_Handler() {
+    led_toggle(LED_PORT, LED_PIN);
+    button::button_clear_interrupt(USER_BTN_PIN);  // clear the button's pin, not the LED's
 }

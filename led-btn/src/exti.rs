@@ -80,3 +80,22 @@ pub fn enable_interrupt(exti_line: ExtiLine) {
 pub fn disable_interrupt(exti_line: ExtiLine) {
     configure_interrupt(exti_line, false);
 }
+
+pub fn clear_pending_interrupt(exti_line: ExtiLine) {
+    let exti_pr1_reg_addr = (EXTI_BASE + 0x14) as *mut u32;
+    let exti_pr2_reg_addr = (EXTI_BASE + 0x34) as *mut u32;
+
+    let line = exti_line as u32;
+
+    match line {
+        0..=31 => {
+            reg_set_bit(exti_pr1_reg_addr, line, true);
+        }
+
+        32..=33 => {
+            reg_set_bit(exti_pr2_reg_addr, line, true);
+        }
+
+        _ => (),
+    }
+}

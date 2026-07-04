@@ -10,7 +10,7 @@
      {
     "name": "Cortex Debug",
     "cwd": "${workspaceFolder}",
-    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/em-rust",
+    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/led-btn",
     "request": "launch",
     "type": "cortex-debug",
 

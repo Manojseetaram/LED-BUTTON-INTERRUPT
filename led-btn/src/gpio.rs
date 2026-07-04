@@ -73,3 +73,7 @@ pub fn set_gpio_pin_state(port: u32, pin: u32, pin_state: PinState) {
         }
     }
 }
+pub fn get_gpio_pin_state(port: u32, pin: u32) -> bool {
+    let gpio_idr_addr = (port + 0x10) as *mut u32;
+    reg_read_bit(gpio_idr_addr, pin)
+}
