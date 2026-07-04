@@ -5,12 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         
+        
 
 
      {
     "name": "Cortex Debug",
     "cwd": "${workspaceFolder}",
-    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/led-btn",
+    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/led-toggle_systick",
     "request": "launch",
     "type": "cortex-debug",
 
