@@ -10,6 +10,7 @@ use led::*;
 use crate::button::Trigger::FallingEdge;
 mod board;
 mod button;
+mod exti;
 mod gpio;
 mod led;
 mod mcu;
