@@ -11,7 +11,7 @@
      {
     "name": "Cortex Debug",
     "cwd": "${workspaceFolder}",
-    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/led-toggle_systick",
+    "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/itm_print",
     "request": "launch",
     "type": "cortex-debug",
 
