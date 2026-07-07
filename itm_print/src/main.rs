@@ -39,7 +39,14 @@ unsafe  {
 
     
 loop { 
-    
+  // cortex_m::interrupt::free(|_|
+  //  unsafe {
+  //     if let Some(peripherals) = (*addr_of_mut!(PERIPHERALS)).as_mut(){
+  //       itm_debug::itm_print(peripherals, "Message from Main loop");
+  //     }
+  //   }
+  // )
+   
 }
 
   }
@@ -57,12 +64,15 @@ loop {
 
   #[exception]
   fn SysTick (){
-    unsafe {
+cortex_m::interrupt::free(|_|
+   unsafe {
     if let Some(peripherals) = (*addr_of_mut!(PERIPHERALS)).as_mut(){
         itm_debug::itm_print(peripherals, "Hello from SysTick");
     }
 
     }
+);
+   
 
 led::led_toggle(board::LED_PORT, board::LED_PIN);
   }
