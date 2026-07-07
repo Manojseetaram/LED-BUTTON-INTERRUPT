@@ -1,9 +1,9 @@
 #![no_std]
 #![no_main]
 #![allow(dead_code)]
-use core::ptr::addr_of_mut;
+use core::{cell::RefCell};
 
-use cortex_m::peripheral::{ Peripherals, syst};
+use cortex_m::{interrupt::Mutex, peripheral::{ Peripherals, syst}};
 use cortex_m_rt::{entry, exception};
 use panic_halt as _;
 
@@ -17,7 +17,8 @@ mod reg;
 mod board;
 mod mcu;
 mod itm_debug;
-static mut PERIPHERALS : Option<Peripherals> = None;
+// static mut PERIPHERALS : Option<Peripherals> = None;
+static PERIPHERALS : Mutex<RefCell<Option<Peripherals>>> = Mutex::new(RefCell::new(None));
 
 #[entry]
 
@@ -30,10 +31,11 @@ static mut PERIPHERALS : Option<Peripherals> = None;
       
           itm_debug::itm_print(&mut peripherals, "Hello form main");
         systick_init(&mut  peripherals);
+        cortex_m::interrupt::free(|cs| {
+    *PERIPHERALS.borrow(cs).borrow_mut() = Some(peripherals);
+        });
           
-unsafe  {
-  PERIPHERALS = Some(peripherals);
-}
+
 
 
 
@@ -64,11 +66,11 @@ loop {
 
   #[exception]
   fn SysTick (){
-cortex_m::interrupt::free(|_|
-   unsafe {
-    if let Some(peripherals) = (*addr_of_mut!(PERIPHERALS)).as_mut(){
+cortex_m::interrupt::free(|cs : &cortex_m::interrupt::CriticalSection|
+
+    if let Some(peripherals) = &mut *PERIPHERALS.borrow(cs).borrow_mut(){
         itm_debug::itm_print(peripherals, "Hello from SysTick");
-    }
+
 
     }
 );
