@@ -2,26 +2,24 @@
 #![no_main]
 #![allow(dead_code)]
 use core::panic::PanicInfo;
-use rtt_target::{rprintln, rtt_init_print};
+use rtt_target::{rtt_init_print, rprintln};
 
 mod board;
 mod button;
-mod critical_section_impl;
+mod proc;
 mod exti;
 mod gpio;
 mod led;
 mod mcu;
-mod mfrc522;
-mod proc;
 mod reg;
 mod spi;
+mod mfrc522;
+mod critical_section_impl;
 mod startup_stm32f401;
 
 fn delay(cycles: u32) {
     for _ in 0..cycles {
-        unsafe {
-            core::arch::asm!("nop");
-        }
+        unsafe { core::arch::asm!("nop"); }
     }
 }
 
@@ -34,22 +32,25 @@ fn main() {
     led::led_off(board::LED_PORT, board::LED_PIN);
     mfrc522::mfrc522_init();
 
-    let version = mfrc522::read_version();
-    rprintln!("MFRC522 version register: 0x{:02X}", version);
+    let mut card_present = false;
 
-   loop {
-    if let Some(uid) = mfrc522::read_card_uid() {
-        rtt_target::rprintln!("Card UID: {:02X} {:02X} {:02X} {:02X}", uid[0], uid[1], uid[2], uid[3]);
-        for _ in 0..4 {
-            led::led_on(board::LED_PORT, board::LED_PIN);
-            delay(200_000);
-            led::led_off(board::LED_PORT, board::LED_PIN);
-            delay(200_000);
+    loop {
+        match mfrc522::read_card_uid() {
+            Some(uid) => {
+                if !card_present {
+                    rprintln!("UID: {:02X} {:02X} {:02X} {:02X}", uid[0], uid[1], uid[2], uid[3]);
+                    led::led_on(board::LED_PORT, board::LED_PIN);
+                    delay(200_000);
+                    led::led_off(board::LED_PORT, board::LED_PIN);
+                    card_present = true;
+                }
+            }
+            None => {
+                card_present = false;
+            }
         }
-        delay(500_00); // short pause so one tap doesn't print 50 times in a row
+        delay(50_000); // fast polling for good tap responsiveness
     }
-    delay(100_00); // much shorter poll interval
-}
 }
 
 #[panic_handler]
