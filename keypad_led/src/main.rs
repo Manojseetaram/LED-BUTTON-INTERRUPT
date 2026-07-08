@@ -14,6 +14,8 @@ mod mcu;
 mod reg;
 mod spi;
 mod mfrc522;
+mod i2c;
+mod lcd;
 mod critical_section_impl;
 mod startup_stm32f401;
 
@@ -26,33 +28,24 @@ fn delay(cycles: u32) {
 #[unsafe(no_mangle)]
 fn main() {
     rtt_init_print!();
-    rprintln!("RFID reader starting...");
+    rprintln!("I2C scanner starting...");
 
-    led::led_init(board::LED_PORT, board::LED_PIN);
-    led::led_off(board::LED_PORT, board::LED_PIN);
-    mfrc522::mfrc522_init();
+    i2c::i2c1_init();
 
-    let mut card_present = false;
-
-    loop {
-        match mfrc522::read_card_uid() {
-            Some(uid) => {
-                if !card_present {
-                    rprintln!("UID: {:02X} {:02X} {:02X} {:02X}", uid[0], uid[1], uid[2], uid[3]);
-                    led::led_on(board::LED_PORT, board::LED_PIN);
-                    delay(200_000);
-                    led::led_off(board::LED_PORT, board::LED_PIN);
-                    card_present = true;
-                }
-            }
-            None => {
-                card_present = false;
-            }
+    rprintln!("Scanning I2C bus...");
+    let mut found_any = false;
+    for addr in 1u8..127 {
+        if i2c::i2c1_write(addr, &[]) {
+            rprintln!("Found device at address: 0x{:02X}", addr);
+            found_any = true;
         }
-        delay(50_000); // fast polling for good tap responsiveness
     }
-}
+    if !found_any {
+        rprintln!("No I2C devices found!");
+    }
 
+    loop {}
+}
 #[panic_handler]
 fn panic_handler(_info: &PanicInfo) -> ! {
     loop {}

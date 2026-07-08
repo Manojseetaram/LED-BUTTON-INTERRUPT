@@ -21,6 +21,16 @@ pub const GPIO_PIN_4: u32 = 4;
 pub const GPIO_PIN_5: u32 = 5;
 pub const GPIO_PIN_6: u32 = 6;
 pub const GPIO_PIN_7: u32 = 7;
+pub const I2C1_BASE: u32 = 0x4000_5400;
+pub const I2C_CR1_OFFSET: u32   = 0x00;
+pub const I2C_CR2_OFFSET: u32   = 0x04;
+pub const I2C_DR_OFFSET: u32    = 0x10;
+pub const I2C_SR1_OFFSET: u32   = 0x14;
+pub const I2C_SR2_OFFSET: u32   = 0x18;
+pub const I2C_CCR_OFFSET: u32   = 0x1C;
+pub const I2C_TRISE_OFFSET: u32 = 0x20;
+
+
 
 #[allow(non_camel_case_types)]
 pub enum IRQn {

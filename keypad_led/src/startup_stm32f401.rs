@@ -192,6 +192,7 @@ extern "C" fn default_Handler() {
 }
 #[unsafe(no_mangle)]
 extern "C" fn hardfault_Handler() {
+    rtt_target::rprintln!("HARDFAULT!");
     loop {}
 }
 #[unsafe(no_mangle)]

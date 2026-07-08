@@ -29,6 +29,10 @@ pub fn enable_gpio_clock(port: u32) {
         _ => {}
     }
 }
+pub fn set_gpio_output_type_open_drain(port: u32, pin: u32) {
+    let gpio_op_type_reg_addr = (port + 0x04) as *mut u32;
+    reg_set_bits(gpio_op_type_reg_addr, 1, pin, 1); // 1 = open-drain
+}
 pub fn set_gpio_mode_output(port: u32, pin: u32) {
     let gpio_mode_reg_addr = (port + 0x00) as *mut u32;
     let bit_position = pin * 2;
